@@ -1,0 +1,2 @@
+?paste
+example(paste)
