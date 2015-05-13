@@ -11,7 +11,7 @@ library(stringr)
 # 
 # http://docs.rexamine.com/R-man/stringi/stringi-package.html
 
-stri_join(c("a", "b", "c"), c("x", "y"))
+stri_join(c("a", "b", "c"), c("x", "y", "w"))
 'ID_' %stri+% 1:5
 
 stri_detect_fixed("hi ho hi", "hi")
@@ -30,6 +30,7 @@ stri_sub(x, 2, 4) <- "efghi"
 x
 
 stri_extract("this: that, more", regex = "this: (that), more")
+stri_match_all("this: that, more", regex = "this: (that), more")
 stri_match_all("this: that, more this: something, more", regex = "this: ([^,]*), more")
 stri_match_all("this: that, more this: something, more",
                regex = "this: ([^,]*), more")[[1]][,2]
@@ -61,12 +62,21 @@ is.atomic(list())
 
 paste(c("a", "b", "c"), c("w", "x", "y", "z"))
 paste(c("a", "b", "c"), c("w", "x", "y", "z"), collapse = ":")
-paste(c("a", "b", "c"), c("w", "x", "y", "z"), collapse = ":", sep="#")
+paste(c("a", "b", "c"), c("w", "x", "y", "z"), collapse = ":", sep = "#")
 
-paste(list(list(x=3)), c("x", "y"))
-str_c(list(list(x=3)), c("x", "y"))
+paste(list(list(x = 3)), c("x", "y"))
+str_c(list(list(x = 3)), c("x", "y"))
 
 ?paste0
 # Noteworthy in this man page is that paste0 is claimed to be sligthly more 
 # efficient.
 
+
+## below still needs to be worked out
+stri_replace_all("hi ho ha", c("one", "two", "three"), fixed = c("hi", "ho", "ha"))
+stri_replace_all("hi ho ha", c("one", "two", "three"), fixed = c("hi", "ho", "ha"), vectorize_all = TRUE)
+stri_replace_all_fixed("hi ho ha", c("one", "two", "three"), c("hi", "ho", "ha"), vectorize_all = TRUE)
+stri_replace_all_fixed("hi ho ha", c("one", "two", "three"), c("hi", "ho", "ha"), vectorize_all = FALSE)
+stri_replace_all_fixed("hi ho ha", c("one", "two", "three"), c("hi", "ho", "ha"))
+stri_replace_all_fixed("hi ho ha", c("hi", "ho", "ha"), c("one", "two", "three"))
+stri_replace_all_fixed("hi ho ha", c("hi", "ho", "ha"), c("one", "two", "three"), vectorize_all = FALSE)
