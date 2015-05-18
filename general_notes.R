@@ -1,3 +1,5 @@
+library(dplyr)
+
 ?paste
 example(paste)
 
@@ -14,3 +16,7 @@ stringi::`%s+%`
 # the path argument is also output; i.e. in using files below we do not
 # need to paste0("data/", filename) since the data/ is already there
 files <- list.files(pattern = "arabweeks-week-.*\\.csv", "data/", full.names = TRUE)
+
+structure(c(128675575, 91892653), .Names = c("day1", "day2")) %>%
+  format(big.mark = ",") %>%
+  print(quote = FALSE)
