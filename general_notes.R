@@ -9,3 +9,8 @@ sessionInfo()
 # looking up functions
 getAnywhere(`%s+%`)
 stringi::`%s+%`
+
+# for the list.files function, using argument full.names = TRUE makes that
+# the path argument is also output; i.e. in using files below we do not
+# need to paste0("data/", filename) since the data/ is already there
+files <- list.files(pattern = "arabweeks-week-.*\\.csv", "data/", full.names = TRUE)
