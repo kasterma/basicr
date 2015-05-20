@@ -20,3 +20,7 @@ files <- list.files(pattern = "arabweeks-week-.*\\.csv", "data/", full.names = T
 structure(c(128675575, 91892653), .Names = c("day1", "day2")) %>%
   format(big.mark = ",") %>%
   print(quote = FALSE)
+
+xx <- rep(1, 1000)
+format(object.size(xx), units = "auto")
+format(structure(100000000, class = "object_size"), unit = "MB")
