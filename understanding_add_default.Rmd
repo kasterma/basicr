@@ -1,0 +1,35 @@
+---
+title: "Understanding add_default"
+output: html_document
+---
+
+```{r setup}
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r test_data}
+df1 <- data.frame(itemid = c(1,1,2), groupid = c("g1","g2","g1"), value = c(1,2,3))
+df2 <- data.frame(itemid = c(1,1,2), groupid = c("g1","g2","g1"),
+                  value = c(1,2,3), value2 = c(11,22,33))
+```
+
+Looking at `df1` it is easy to see that item `2` doesn't have a value in
+group `2`.  So the every item has a value in every group rule is broken.
+
+```{r}
+xtabs(value ~ itemid + groupid, df1) %>% as.data.frame
+df1 %>% spread(groupid, value, fill = 999)
+df1 %>% spread(groupid, value, fill = 999)
+left_join(expand(df1, groupid, itemid), df1)
+
+df2 %>% spread(groupid, value, fill = 999)
+df2 %>% spread(groupid, value, fill = 999) %>% gather(group, value, g1, g2)
+df2 %>% expand(itemid, groupid)
+xtabs(value ~ itemid + groupid, df2) %>% as.data.frame
+left_join(expand(df2, groupid, itemid), df2)
+
+df2 %>% add_default_value(itemid, groupid, value, 44) ## totally wrong
+```
+
