@@ -24,3 +24,8 @@ structure(c(128675575, 91892653), .Names = c("day1", "day2")) %>%
 xx <- rep(1, 1000)
 format(object.size(xx), units = "auto")
 format(structure(100000000, class = "object_size"), unit = "MB")
+
+zz <- textConnection("foo", "w")
+writeLines(c("testit11", "testit21"), zz)
+close(zz)
+foo
