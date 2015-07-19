@@ -5,18 +5,40 @@ library(igraph)
 
 # to dot ------------------------------------------------------------------
 
-g <- graph.ring(10)
-g_textC <- textConnection("g_text", open = "w")
-write.graph(g, file = g_textC, format = "dot")
-close(g_textC)
-
-write.graph(g, file = "test.dot", format = "dot")
-
-zz <- textConnection("foo", "w")
-writeLines(c("testit11", "testit21"), zz)
-close(zz)
-
-foo
-
 g <- graph.ring(3)
-write.graph(g, file = "test.dot", format = "dot")
+# write.graph(g, file = "test.dot", format = "dot")  # generates many errors
+# write.graph(g, file = "test.graphml", format = "graphml")
+
+
+# depth first traversal ---------------------------------------------------
+
+g <- graph_from_literal(A-B-D-E, B-C, D-F, D-C)
+plot(g)
+g <- g + edge(V(g)["E"], V(g)["F"])
+plot(g)
+
+#' do a depth first traversal of g starting at v
+depth_first <- function(g, v) {
+  get_nbd <- function(x) neighbors(g, x)
+  q <- v
+  added <- v
+  proc <- c()
+  while(length(q) > 0) {
+    n <- q[1]
+    q <- q[-1]
+
+    proc <- c(proc, n)
+    
+    nbd <- get_nbd(n)
+    # only add any element once (or finite no times if multiple edges)
+    nbd <- nbd[!nbd %in% added]
+    if(length(nbd) != 0) {
+      q <- c(nbd, q)
+      added <- c(added, nbd)
+    }
+    
+  }
+  proc
+}
+
+depth_first(g, V(g)["B"])
