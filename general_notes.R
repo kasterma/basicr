@@ -29,3 +29,13 @@ zz <- textConnection("foo", "w")
 writeLines(c("testit11", "testit21"), zz)
 close(zz)
 foo
+
+.1 == .3/3
+all.equal(.1, .3/3)
+
+methods(print)
+methods(class="lm")
+
+conflicts(detail = TRUE)
+
+find("c")
