@@ -5,6 +5,8 @@ library(tidyr)
                    value = c(3,2,1,2,3,1,22),
                    itemid = c(1:6, 6)))
 
+complete(df1, groupid, itemid)
+
 (df4 <- data.frame(groupid = c("one","one","one","two","two","two", "one", "one"),
                    value = c(3,2,1,2,3,1,22,33),
                    itemid = c(1:6, 6 ,6)))
