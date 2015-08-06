@@ -29,3 +29,5 @@ zz <- textConnection("foo", "w")
 writeLines(c("testit11", "testit21"), zz)
 close(zz)
 foo
+
+?as.numeric   ## issues with numeric VS double
