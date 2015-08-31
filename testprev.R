@@ -1,19 +1,81 @@
-# not too many per time
+## not too many per time
+##
+## We have a data frame with events happening at different times.  These
+## events happen to different items identified by id.  We want to see that
+## per given time length there are not more than 2 events.
+##
+## A nice generalization would be to have not more than k events per time
+## length.
 
 library(dplyr)
+library(data.table)
 library(pryr)
 library(magrittr)
+library(testthat)
+
+## set up testdata -------------------------------------------------------------
 
 df1 <- data.frame(id=1, time = c(1,2,5), val = runif(3))
 df2 <- data.frame(id=2, time = c(2,1,3), val = runif(3))
 df_test <- rbind(df1, df2)
 
-sumlast <- function(x,y) ifelse(is.na(x), 1, ifelse(is.na(y), 1 + x, 1 + x + y))
+## some dplyr solutions --------------------------------------------------------
+
+df_test %>% group_by(id) %>% arrange(time) %>%
+  mutate(since_last = time - lag(time),
+         since_before_last = time - lag(time, 2)) %>% rowwise %>%
+  mutate(ct = sum(c(since_last <= 2, since_before_last <= 2), na.rm = TRUE))
+
+df_test %>% group_by(id) %>% arrange(time) %>%
+  mutate(since_last = time - lag(time),
+         since_before_last = time - lag(time, 2)) %>%
+  ungroup %>%
+  mutate(ct = rowSums(cbind(since_last <= 2, since_before_last <= 2), na.rm = TRUE))
+
+#' sum booleans related to time differences
+#' has property that if is.na(x), then also is.na(y)
+sumtimeboolean <- function(x,y) ifelse(is.na(x), 0, ifelse(is.na(y), x, x + y))
+## using pryr::f we could also write this in the following form
+sumtimeboolean <- f(ifelse(is.na(x), 0, ifelse(is.na(y), x, x + y)))
+## Note: f correctly identifies that x and y are to be the arguments
+
+expect_equal(sumtimeboolean(1, NA), 1)
+expect_equal(sumtimeboolean(c(1,1), c(NA, 3)), c(1,4))
+expect_equal(sumtimeboolean(c(NA, 1, 2), c(1, NA, 2)), c(0, 1, 4))
 
 df_test %>% group_by(id) %>% arrange(time) %>%
   mutate(last = time - lag(time),
          llast = time - lag(time, 2),
-         ct = sumlast(last <= 2, llast <= 2))
+         ct = sumtimeboolean(last <= 2, llast <= 2))
+
+## the following is not correct, ct is computed per group as sum
+## of all booleans in group
+df_test %>% group_by(id) %>% arrange(time) %>%
+  mutate(last = time - lag(time),
+         llast = time - lag(time, 2),
+         ct = sum(c(last <= 2, llast <= 2), na.rm = TRUE))
+
+## some data.table solutions ---------------------------------------------------
+
+dt_test <- as.data.table(df_test)
+
+dt_test[order(time)
+        ][,.(time,
+             val,
+             since_last = time-lag(time),
+             since_before_last = time - lag(time, 2)),
+          id][,.(val, since_last, since_before_last,
+                 ct = sum(c(since_last <= 2, since_before_last <= 2), na.rm = TRUE)),
+              .(id, time)]
+
+dt_test[order(time)
+        ][,.(time,
+             val,
+             since_last = time-lag(time),
+             since_before_last = time - lag(time, 2)),
+          id][,.(id, time, val, since_last, since_before_last,
+                 ct = rowSums(cbind(since_last <= 2, since_before_last <= 2), na.rm = TRUE)),]
+
 
 prevf <- function(l, t) {
   lapply(t, f(t0, as.list(Filter(f(tt, tt <= t0 && t0 - 3600 * 24 <= tt), l))))
@@ -30,7 +92,7 @@ bb <- tbl_df(read.csv("~/Downloads/bs.csv",
   mutate(timestamp = timestamp/1000)
 
 bb %>% group_by(iid, id) %>% slice(1L) %>% ungroup %>%
-  group_by(id) %>%
+  group_by(id) %>%x0
   arrange(timestamp) %>%
   mutate(timediff = timestamp - lag(timestamp)) %>%
   filter(timediff < 60)
