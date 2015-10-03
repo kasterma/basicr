@@ -23,7 +23,7 @@ structure(c(128675575, 91892653), .Names = c("day1", "day2")) %>%
 
 xx <- rep(1, 1000)
 format(object.size(xx), units = "auto")
-format(structure(100000000, class = "object_size"), unit = "MB")
+format(structure(100000000, class = "object_size"), units = "MB")
 
 zz <- textConnection("foo", "w")
 writeLines(c("testit11", "testit21"), zz)
@@ -42,3 +42,13 @@ conflicts(detail = TRUE)
 
 find("c")
 
+f1 <- function(x = 3) {
+    if(missing(x))
+        print(paste("missing", x))
+    else
+        print(paste("here", x))
+}
+
+f1()  # missing 3
+
+tracemem
