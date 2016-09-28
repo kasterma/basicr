@@ -155,3 +155,30 @@ p3 <- ggplot(dat_p3) +
   theme(legend.position = "none")
 
 grid.arrange(p1, p2, p3, nrow = 1)
+
+# point estimate
+
+pt_prob <- function(D, x) {
+  rule_ps <- post(D)
+  name_2_prob <- function(name) {
+    if (rules[[name]]$contains(x))
+      rule_ps[name] * 1/rules[[name]]$size
+    else
+      0.0
+  }
+  setNames(sapply(names(rule_ps), name_2_prob), names(rule_ps))
+}
+
+test_that("pt_prob works as advertised", {
+  res_16_2 <- pt_prob(16, 2)
+  expect_true(res_16_2['powers_of_2'] > res_16_2['all'])
+  expect_equal(unname(res_16_2['odd']), 0)
+  expect_equal(unname(res_16_2['mult_of_4']), 0)
+  expect_equal(res_16_2,
+               structure(c(0.00264550264550265, 0, 0, 7.61904761904762e-05,
+                           0, 0, 0, 2.38095238095238e-05),
+                         .Names = c("powers_of_2","powers_of_3",
+                                    "powers_of_4", "even", "odd", "mult_of_3",
+                                    "mult_of_4", "all")))
+  expect_equal(res_16_2, post(c(16,2)))
+})
