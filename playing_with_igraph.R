@@ -5,10 +5,29 @@ library(igraph)
 
 # to dot ------------------------------------------------------------------
 
-g <- graph.ring(3)
+g <- make_ring(3)
 # write.graph(g, file = "test.dot", format = "dot")  # generates many errors
 # write.graph(g, file = "test.graphml", format = "graphml")
 
+xx <- set_vertex_attr(g, "name", value = c("a", "b", "c"))
+as_data_frame(xx, what = "both")
+
+# creating graphs ---------------------------------------------------------
+
+edge_list_1 <- matrix(c(1,2,1,3,1,4,2,3), ncol = 2, byrow = TRUE)
+g1 <- graph_from_edgelist(edge_list_1)
+
+plot(graph_from_data_frame(data.frame(from = c("a", "b", "c"), to = c("b", "c", "a")),
+                           vertices = data.frame(name = c("a", "b", "c"))))
+plot(graph_from_data_frame(data.frame(from = c("a", "b", "c"), to = c("b", "c", "a"))))
+plot(g2 <- graph_from_data_frame(data.frame(from = c("a", "b", "c"), to = c("b", "c", "a")),
+                                 vertices = data.frame(name = c("a", "b", "c", "d"),
+                                                       val = 2 * 1:4)))
+
+g2 <- set_edge_attr(g2, "name", value = c("e1", "e2", "e3"))
+E(g2)["e2"]
+delete_edges(g2, "e2")
+plot(g2, edge.label = E(g2)$name)
 
 # depth first traversal ---------------------------------------------------
 
@@ -28,7 +47,7 @@ depth_first <- function(g, v) {
     q <- q[-1]
 
     proc <- c(proc, n)
-    
+
     nbd <- get_nbd(n)
     # only add any element once (or finite no times if multiple edges)
     nbd <- nbd[!nbd %in% added]
@@ -36,7 +55,7 @@ depth_first <- function(g, v) {
       q <- c(nbd, q)
       added <- c(added, nbd)
     }
-    
+
   }
   proc
 }
@@ -51,9 +70,9 @@ breadth_first <- function(g, v) {
   while(length(q) > 0) {
     n <- q[1]
     q <- q[-1]
-    
+
     proc <- c(proc, n)
-    
+
     nbd <- neighbors(g, n)
     # only add any element once (or finite no times if multiple edges)
     nbd <- nbd[!nbd %in% added]
@@ -61,7 +80,7 @@ breadth_first <- function(g, v) {
       q <- c(q, nbd)
       added <- c(added, nbd)
     }
-    
+
   }
   proc
 }
