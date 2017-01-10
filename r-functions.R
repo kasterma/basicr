@@ -28,3 +28,15 @@ expect_equal(c(list(1, list(2,3)), list(list(4,list(5,6))), recursive = TRUE),
              1:6)
 expect_equal(c(list(x = 2, y = 4), recursive = TRUE), c(x = 2, y = 4))
 expect_equal(c(list(x = 2, y = 4), recursive = TRUE, use.names = FALSE), c(2,4))
+
+## getting version information
+packageVersion("testthat")
+sessionInfo()
+version
+version$version.string
+installed.packages()
+packinfo <- installed.packages()
+packinfo["testthat",]
+asNamespace("testthat")$`.__NAMESPACE__.`$spec
+packageDescription("testthat")
+getNamespaceVersion("testthat")
