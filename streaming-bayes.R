@@ -34,15 +34,16 @@ ggplot(vals %>% group_by(x) %>% mutate(val = val / max(val)), aes(w0, w1, color 
   facet_wrap(~ x, nrow = 5) +
   scale_colour_gradientn(colours = rev(rainbow(2)))
 
-init <- do.call(likelihood, as.list(pts[1,])) %>% mutate(val = 1)
+plt_dim <- 50
+init <- do.call(likelihood, as.list(c(pts[1,], plt_dim))) %>% mutate(val = 1)
 dists <- list(init %>% mutate(id = 0))
 for (idx in seq_len(n)) {
-  new_vals <- do.call(likelihood, as.list(pts[idx,]))$val
+  new_vals <- do.call(likelihood, as.list(c(pts[idx,], plt_dim)))$val
   dists[[idx + 1]] <- dists[[idx]] %>% mutate(id = idx, val = val * new_vals) %>%
     mutate(val = val / sum(val))
 }
 all_vals <- Reduce(rbind, dists[-1])
 
-ggplot(all_vals, aes(w0, w1, color = val)) + geom_point() +
+ggplot(all_vals, aes(w0, w1, color = val)) + geom_point(size = 0.5) +
   facet_wrap(~ id, nrow = 5) +
   scale_colour_gradientn(colours = rev(rainbow(3)))
