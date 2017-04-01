@@ -1,0 +1,15 @@
+/* Created by igraph @VERSION@ */
+graph {
+  graph [
+    name="Ring graph"
+    mutual=0
+    circular=1
+  ];
+  0;
+  1;
+  2;
+
+  1 -- 0;
+  2 -- 1;
+  2 -- 0;
+}
